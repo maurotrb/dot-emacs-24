@@ -15,15 +15,430 @@
   (with-current-buffer
       (url-retrieve-synchronously
        "https://raw.github.com/dimitri/el-get/master/el-get-install.el")
-    (goto-char (point-max))
-    (eval-print-last-sexp)))
+      (let (el-get-master-branch)
+          (goto-char (point-max))
+          (eval-print-last-sexp))))
 
 (add-to-list 'el-get-recipe-path "~/.emacs24.d/el-get-user/recipes")
-(el-get 'sync)
+
+(setq my-packages
+      (append
+       '(el-get solarized-theme
+                ;; git
+                magit
+                ;;
+                smex
+                ;; programming
+                haskell-mode
+                ledger-mode
+                )
+       (mapcar 'el-get-source-name el-get-sources)))
+
+(el-get 'sync my-packages)
 #+end_src
 
 ** General
 
+*** Basic settings
+
+**** Language environment
+The language environment controls which coding systems to recognize when reading
+text. This applies to files, incoming mail, and any other text you read into
+Emacs. It may also specify the default coding system to use when you create a file.
+Each language environment also specifies a default input method.
+#+begin_src emacs-lisp
+(set-language-environment "UTF-8")
+#+end_src
+
+**** Ido (Interactively Do)
+The "Ido" package can let you switch between buffers and visit files and directories
+with a minimum of keystrokes.
+#+begin_src emacs-lisp
+(ido-mode t)
+#+end_src
+
+Use ido for all buffer and file selections in Emacs.
+#+begin_src emacs-lisp
+(setq ido-everywhere t)
+#+end_src
+
+Flexible matching means that if the entered string does not match any item, any
+item containing the entered characters in the given sequence will match.
+#+begin_src emacs-lisp
+(setq ido-enable-flex-matching t)
+#+end_src
+
+Find File At Point, also known generally as "ffap", is an intelligent system for
+opening files, and URLs.
+#+begin_src emacs-lisp
+(setq ido-use-filename-at-point 'guess)
+#+end_src
+
+Always create new buffers unconditionally if no buffer matches substring.
+#+begin_src emacs-lisp
+(setq ido-create-new-buffer 'always)
+#+end_src
+
+Customize the order in which files are sorted when Ido displays them in the
+minibuffer.
+#+begin_src emacs-lisp
+(setq ido-file-extensions-order '(".org" ".txt" ".el"))
+#+end_src
+
+**** Smex
+Smex is a M-x enhancement for Emacs. Built on top of Ido, it provides a convenient
+interface to your recently and most frequently used commands. And to all the other
+commands, too.
+
+Run Smex. The commands are displayed in an Ido completion buffer, ordered by
+relevance. The 7 most recently executed commands come first, the rest are sorted
+by frequency of use, command length and in alphabetical order.
+#+begin_src emacs-lisp
+(global-set-key (kbd "M-x") 'smex)
+#+end_src
+
+Run Smex, limited to commands that are relevant to the active major mode.
+#+begin_src emacs-lisp
+(global-set-key (kbd "M-X") 'smex-major-mode-commands)
+#+end_src
+
+Rebind old M-x.
+#+begin_src emacs-lisp
+;; This is your old M-x.
+(global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
+#+end_src
+
+**** Whitespace
+This package is a minor mode to visualize blanks (TAB, (HARD) SPACE and NEWLINE).
+#+begin_src emacs-lisp
+(require 'whitespace)
+#+end_src
+
+Set styles:
++ trailing spaces
++ tabs
++ lines that goes beyond 80 columns
++ empty line at the beginning or at the end of the buffer
+#+begin_src emacs-lisp
+(setq whitespace-style '(face trailing tabs lines-tail empty))
+(setq whitespace-line-column 80)
+#+end_src
+
+Turn on Whitespace mode on all buffers.
+#+begin_src emacs-lisp
+(global-whitespace-mode t)
+#+end_src
+
+**** Backup
+Organize backup ...
+
+... with copy and not symlink
+#+begin_src emacs-lisp
+(setq backup-by-copying t)
+#+end_src
+
+... in a specific directory
+#+begin_src emacs-lisp
+(setq backup-directory-alist '(("." . "~/.emacs24.saves")))
+#+end_src
+
+... deleting excess backup versions
+#+begin_src emacs-lisp
+(setq delete-old-versions t)
+#+end_src
+
+... keeping the oldest two versions
+#+begin_src emacs-lisp
+(setq kept-old-versions 2)
+#+end_src
+
+... keeping the newest six versions
+#+begin_src emacs-lisp
+(setq kept-new-versions 6)
+#+end_src
+
+... using version numbers for backups
+#+begin_src emacs-lisp
+(setq version-control t)
+#+end_src
+
+**** Easy PG
+EasyPG is an all-in-one GnuPG interface for Emacs. It has two aspects:
+convenient tools which allow to use GnuPG from Emacs (EasyPG Assistant),
+and a fully functional interface library to GnuPG (EasyPG Library).
+
+Setup for transparent, automatic encryption and decryption:
+#+begin_src emacs-lisp
+(epa-file-enable)
+#+end_src
+
+**** Disabling prompts
+Replace “yes or no” prompt with “y or n”.
+#+begin_src emacs-lisp
+(fset 'yes-or-no-p 'y-or-n-p)
+#+end_src
+
+No confirmation if a file or buffer does not exist when you use C-x C-f or C-x b.
+#+begin_src emacs-lisp
+(setq confirm-nonexistent-file-or-buffer nil)
+#+end_src
+
+*** User Interface
+
+Ubuntu Mono as default font.
+#+begin_src emacs-lisp
+(set-default-font "Ubuntu Mono-13")
+#+end_src
+
+No startup messages.
+#+begin_src emacs-lisp
+(setq inhibit-startup-message t
+      inhibit-startup-echo-area-message t)
+#+end_src
+
+No toolbar and scroll bar.
+#+begin_src emacs-lisp
+(tool-bar-mode -1)
+(toggle-scroll-bar -1)
+#+end_src
+
+Display the current column number.
+#+begin_src emacs-lisp
+(column-number-mode t)
+#+end_src
+
+Toggle Font Lock mode in all buffers.
+#+begin_src emacs-lisp
+(global-font-lock-mode 1)
+#+end_src
+
+Change theme to solarized dark.
+#+begin_src emacs-lisp
+(if window-system
+  (load-theme 'solarized-dark t))
+#+end_src
+
 ** Org
 
+*** Basic settings
+The four Org commands org-store-link, org-capture, org-agenda, and org-iswitchb
+should be accessible through global keys (i.e., anywhere in Emacs, not just in Org buffers).
+#+begin_src emacs-lisp
+(global-set-key "\C-cl" 'org-store-link)
+(global-set-key "\C-cc" 'org-capture)
+(global-set-key "\C-ca" 'org-agenda)
+(global-set-key "\C-cb" 'org-iswitchb)
+#+end_src
+
+A cleaner outline view can be achieved dynamically at display time using org-indent-mode.
+In this minor mode, all lines are prefixed for display with the necessary amount of space.
+Also headlines are prefixed with additional stars, so that the amount of indentation
+shifts by two spaces per level. All headline stars but the last one are made invisible
+using the org-hide faces. You can turn on org-indent-mode for all files by customizing
+the variable org-startup-indented.
+#+begin_src emacs-lisp
+(setq org-startup-indented t)
+#+end_src
+
+When Emacs first visits an Org file, the global state is set to OVERVIEW, i.e.,
+only the top level headlines are visible.
+#+begin_src emacs-lisp
+(setq org-startup-folded t)
+#+end_src
+
+*** TODOs
+Use TODO keywords as workflow states.
+#+begin_src emacs-lisp
+(setq org-todo-keywords
+      '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d!/!)")
+        (sequence "WAIT(w@/!)" "HOLD(h@/!)" "|" "CANC(c@/!)")))
+#+end_src
+
+Log state change into drawer.
+#+begin_src emacs-lisp
+(setq org-log-done 'time)
+(setq org-log-into-drawer t)
+#+end_src
+
+Highlight TODO keywords with special faces. From Solarized theme.
+#+begin_src emacs-lisp
+(setq org-todo-keyword-faces
+      '(("TODO" . org-todo-kwd-face)
+        ("NEXT" . org-started-kwd-face)
+        ("DONE" . org-done-kwd-face)
+        ("WAIT" . org-waiting-kwd-face)
+        ("HOLD" . org-someday-kwd-face)
+        ("CANC" . org-cancelled-kwd-face)))
+#+end_src
+
+Block entries from changing state to DONE while they have children that are not DONE.
+Furthermore, if an entry has a property ORDERED, each of its children will be blocked
+until all earlier siblings are marked DONE.
+#+begin_src emacs-lisp
+(setq org-enforce-todo-dependencies t)
+#+end_src
+
+TODO entries that cannot be closed because of previous dependencies will be shown
+in a dimmed font or even made invisible in agenda views.
+#+begin_src emacs-lisp
+(setq org-agenda-dim-blocked-tasks t)
+#+end_src
+
+An entry that has unchecked checkboxes will be blocked from switching to DONE.
+#+begin_src emacs-lisp
+(setq org-enforce-todo-checkbox-dependencies t)
+#+end_src
+
+*** Habits
+Org has the ability to track the consistency of a special category of TODOs, called “habits”.
+#+begin_src emacs-lisp
+(add-to-list 'org-modules "org-habit")
+#+end_src
+
+*** Tags
+An excellent way to implement labels and contexts for cross-correlating information
+is to assign tags to headlines. Org mode has extensive support for tags.
+Every headline can contain a list of tags; they occur at the end of the headline.
+Tags are normal words containing letters, numbers, ‘_’, and ‘@’. Tags must be preceded
+and followed by a single colon, e.g., ‘:work:’. Several tags can be specified, as
+in ‘:work:urgent:’. Tags will by default be in bold face with the same color as the headline.
+
+Org supports tag insertion based on a list of tags. By default this list is constructe
+dynamically, containing all tags currently used in the buffer. You may also globally
+specify a hard list of tags with the variable org-tag-alist.
+#+begin_src emacs-lisp
+  (setq org-tag-alist '((:startgroup . nil)
+                        ("@errand" . ?e)
+                        ("@office" . ?o)
+                        ("@home" . ?h)
+                        ("@hometown" . ?w)
+                        ("@commute" . ?m)
+                        (:endgroup . nil)
+                        ("phone" . ?p)
+                        ("computer" . ?c)
+                        ("online" . ?l)))
+#+end_src
+
+*** Capture
+Capture lets you quickly store notes with little interruption of your work flow.
+
+Set a default target file for notes.
+#+begin_src emacs-lisp
+(setq org-default-notes-file (concat org-directory "/refile.org"))
+#+end_src
+
+Templates for different types of capture items.
+#+begin_src emacs-lisp
+  (setq org-capture-templates '(("t" "Todo" entry (file org-default-notes-file)
+                                 "* TODO %?\n%U\n%a\n  %i" :clock-in t :clock-resume t)
+                                ("n" "Note" entry (file org-default-notes-file)
+                                 "* %? :NOTE:\n%U\n%a\n  %i" :clock-in t :clock-resume t)))
+#+end_src
+
+*** Agenda
+
 ** Coding
+
+*** Basic settings
+
+**** No tabs
+By default, Emacs inserts tabs in place of multiple spaces when it formats a region.
+The following turns off Indent Tabs mode:
+#+begin_src emacs-lisp
+(setq-default indent-tabs-mode nil)
+#+end_src
+
+**** Which Function mode
+Which Function mode is a global minor mode which displays the current function
+name in the mode line, updating it as you move around in a buffer. By default,
+it takes effect in all major modes major modes that know how to support it
+(i.e., all the major modes that support Imenu).
+#+begin_src emacs-lisp
+(require 'which-func)
+(which-func-mode t)
+#+end_src
+
+*** Haskell
+Haskell is an advanced purely-functional programming language. An open-source
+product of more than twenty years of cutting-edge research, it allows rapid
+development of robust, concise, correct software. With strong support for integration
+with other languages, built-in concurrency and parallelism, debuggers, profilers,
+rich libraries and an active community, Haskell makes it easier to produce flexible,
+maintainable, high-quality software.
+
+**** Haskell mode
+Haskell Mode is a major mode providing a convenient environment for editing Haskell
+programs.
+
+Intelligent semi-automatic indentation for Haskell’s layout rule. The basic idea
+is to have TAB cycle through possibilities indentation points based on some clever
+heuristics. Improved with rebinds of RET and DEL, so that indentations can be set
+and deleted as if they were real tabs.
+#+begin_src emacs-lisp
+(add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
+#+end_src
+
+By inserting the key bindings for C-, and C-. you can interactively de/indent
+either the following nested block or, if a region is active while in Transient Mark
+Mode, de/indent the active region. By using a numeric prefix argument you can modify
+the shift-amount; for instance, C-u C-, increases indentation by 4 characters at once.
+#+begin_src emacs-lisp
+(eval-after-load "haskell-mode"
+  '(progn
+     (define-key haskell-mode-map (kbd "C-,") 'haskell-move-nested-left)
+     (define-key haskell-mode-map (kbd "C-.") 'haskell-move-nested-right)))
+#+end_src
+
+haskell-decl-scan-mode is a minor mode which performs declaration scanning and
+provides M-x imenu support. For non-literate and TeX-style literate scripts, the
+common convention that top-level declarations start at the first column is assumed.
+For Bird-style literate scripts, the common convention that top-level declarations
+start at the third column, ie. after ‘> ’, is assumed. When haskell-decl-scan-mode
+is active, the standard Emacs top-level definition movement commands are enabled
+to operate on Haskell declarations:
++ C-M-a: Move to beginning of current or preceding declaration
++ C-M-e: Move to end of current or following declaration
++ C-M-h: Select whole current or following declaration
+Moreover, if enabled via the option haskell-decl-scan-add-to-menubar, a menu item
+"Declarations" is added to the menu bar listing the scanned declarations and
+allowing to jump to declarations in the source buffer.
+#+begin_src emacs-lisp
+(add-hook 'haskell-mode-hook 'turn-on-haskell-decl-scan)
+#+end_src
+
+haskell-decl-scan-mode enables the use of features that build upon imenu support such
+as the global “Which Function” minor mode. In order to enable which-function-mode
+for Haskell buffers you need to add the following to your Emacs initialization:
+#+begin_src emacs-lisp
+(eval-after-load "which-func"
+  '(add-to-list 'which-func-modes 'haskell-mode))
+#+end_src
+
+Haskell mode comes equipped with a specialized Compilation mode tailored to GHC’s
+compiler messages with optional support for Cabal projects.
+#+begin_src emacs-lisp
+(eval-after-load "haskell-mode"
+    '(define-key haskell-mode-map (kbd "C-c C-c") 'haskell-compile))
+(eval-after-load "haskell-cabal"
+    '(define-key haskell-cabal-mode-map (kbd "C-c C-c") 'haskell-compile))
+#+end_src
+
+An alternative mode providing a REPL (read–eval–print loop) via GHCi sessions is
+called haskell-interactive-mode, which effectively replaces inferior-haskell-mode,
+but comes with a different set of features. In order to use haskell-interactive-mode
+instead of the default inferior-haskell-mode, you need to replace some of the
+default keybindings in the haskell-mode-map keymap with the respective
+haskell-interactive-mode counterparts:
+#+begin_src emacs-lisp
+(eval-after-load "haskell-mode"
+  '(progn
+    (define-key haskell-mode-map (kbd "C-x C-d") nil)
+    (define-key haskell-mode-map (kbd "C-c C-z") 'haskell-interactive-switch)
+    (define-key haskell-mode-map (kbd "C-c C-l") 'haskell-process-load-file)
+    (define-key haskell-mode-map (kbd "C-c C-b") 'haskell-interactive-switch)
+    (define-key haskell-mode-map (kbd "C-c C-t") 'haskell-process-do-type)
+    (define-key haskell-mode-map (kbd "C-c C-i") 'haskell-process-do-info)
+    (define-key haskell-mode-map (kbd "C-c M-.") nil)
+    (define-key haskell-mode-map (kbd "C-c C-d") nil)))
+#+end_src
+
