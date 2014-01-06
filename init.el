@@ -17,7 +17,7 @@
        (load-path (append (list org-dir org-contrib-dir)
                           (or load-path nil))))
   ;; load up Org-mode and Org-babel
-  (require 'org) ;; to avoid error in autoload, to remove in future
+  ;; if you use org from git, remember 'make autoloads'
   (require 'org-install)
   (require 'ob-tangle))
 
