@@ -336,6 +336,37 @@ Templates for different types of capture items.
 #+end_src
 
 *** Agenda
+Due to the way Org works, TODO items, time-stamped items, and tagged headlines
+can be scattered throughout a file or even a number of files. To get an overview
+of open action items, or of events that are important for a particular date,
+this information must be collected, sorted and displayed in an organized way.
+The extracted information is displayed in a special agenda buffer. This buffer
+is read-only, but provides commands to visit the corresponding locations in the
+original Org files, and even to edit these files remotely.
+
+The information to be shown is normally collected from all agenda files,
+the files listed in the variable org-agenda-files. If a directory is part of this
+list, all files with the extension .org in this directory will be part of the list.
+#+begin_src emacs-lisp
+  (setq org-agenda-files '("~/doc/org"))
+#+end_src
+
+The purpose of the weekly/daily agenda is to act like a page of a paper agenda,
+showing all the tasks for the current week or day. The default number of days
+displayed in the agenda is set by the variable org-agenda-span. This variable
+can be set to any number of days you want to see by default in the agenda, or
+to a span name, such as day, week, month or year.
+#+begin_src emacs-lisp
+  (setq org-agenda-span 'day)
+#+end_src
+
+Before displaying items in an agenda view, Org mode visually prepares the items
+and sorts them. Each item occupies a single line. The line starts with a prefix
+that contains the category of the item and other important information.
+You can customize in which column tags will be displayed through org-agenda-tags-column.
+#+begin_src emacs-lisp
+  (setq org-agenda-tags-column -105)
+#+end_src
 
 ** Coding
 
