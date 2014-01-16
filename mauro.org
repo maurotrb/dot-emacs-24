@@ -6,35 +6,36 @@
 
 ** Packages
 #+begin_src emacs-lisp
-(setq user-emacs-directory "~/.emacs24.d/")
-(setq el-get-dir "~/.emacs24.d/el-get/")
-
-(add-to-list 'load-path "~/.emacs24.d/el-get/el-get")
-
-(unless (require 'el-get nil 'noerror)
-  (with-current-buffer
-      (url-retrieve-synchronously
-       "https://raw.github.com/dimitri/el-get/master/el-get-install.el")
-      (let (el-get-master-branch)
-          (goto-char (point-max))
-          (eval-print-last-sexp))))
-
-(add-to-list 'el-get-recipe-path "~/.emacs24.d/el-get-user/recipes")
-
-(setq my-packages
-      (append
-       '(el-get solarized-theme
-                ;; git
-                magit
-                ;;
-                smex
-                ;; programming
-                haskell-mode
-                ledger-mode
-                )
-       (mapcar 'el-get-source-name el-get-sources)))
-
-(el-get 'sync my-packages)
+  (setq user-emacs-directory "~/.emacs24.d/")
+  (setq el-get-dir "~/.emacs24.d/el-get/")
+  
+  (add-to-list 'load-path "~/.emacs24.d/el-get/el-get")
+  
+  (unless (require 'el-get nil 'noerror)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.github.com/dimitri/el-get/master/el-get-install.el")
+        (let (el-get-master-branch)
+            (goto-char (point-max))
+            (eval-print-last-sexp))))
+  
+  (add-to-list 'el-get-recipe-path "~/.emacs24.d/el-get-user/recipes")
+  
+  (setq my-packages
+        (append
+         '(el-get solarized-theme
+                  ;; git
+                  magit
+                  ;;
+                  smex
+                  ;; programming
+                  haskell-mode
+                  ledger-mode
+                  markdown-mode
+                  )
+         (mapcar 'el-get-source-name el-get-sources)))
+  
+  (el-get 'sync my-packages)
 #+end_src
 
 ** General
@@ -387,6 +388,22 @@ it takes effect in all major modes major modes that know how to support it
 #+begin_src emacs-lisp
 (require 'which-func)
 (which-func-mode t)
+#+end_src
+
+*** Markdown
+markdown-mode is a major mode for GNU Emacs which provides syntax highlighting and
+supporting commands for editing Markdown files.
+
+**** GithHub flavor
+A GitHub Flavored Markdown (GFM) mode, gfm-mode, is also available. The GitHub
+implementation of differs slightly from standard Markdown. The most important
+differences are that newlines are significant, triggering hard line breaks, and
+that underscores inside of words (e.g., variable names) need not be escaped.
+
+For a more complete GitHub-flavored markdown experience, added README.md to
+auto-mode-alist:
+#+begin_src emacs-lisp
+(add-to-list 'auto-mode-alist '("README\\.md\\'" . gfm-mode))
 #+end_src
 
 *** Haskell
