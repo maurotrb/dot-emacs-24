@@ -3,43 +3,31 @@
 #+OPTIONS: toc:4 h:4
 
 * Configuration
-
 ** Packages
 #+begin_src emacs-lisp
   (setq user-emacs-directory "~/.emacs24.d/")
   (setq el-get-dir "~/.emacs24.d/el-get/")
-  
+
   (add-to-list 'load-path "~/.emacs24.d/el-get/el-get")
-  
+
   (unless (require 'el-get nil 'noerror)
-    (with-current-buffer
-        (url-retrieve-synchronously
-         "https://raw.github.com/dimitri/el-get/master/el-get-install.el")
-        (let (el-get-master-branch)
-            (goto-char (point-max))
-            (eval-print-last-sexp))))
-  
+  (with-current-buffer
+      (url-retrieve-synchronously
+       "https://raw.githubusercontent.com/dimitri/el-get/master/el-get-install.el")
+    (goto-char (point-max))
+    (eval-print-last-sexp)))
+
   (add-to-list 'el-get-recipe-path "~/.emacs24.d/el-get-user/recipes")
-  
-  (setq my-packages
-        (append
-         '(el-get solarized-theme
-                  ;; git
-                  magit
-                  ;;
-                  smex
-                  ;; programming
-                  haskell-mode
-                  ledger-mode
-                  markdown-mode
-                  )
-         (mapcar 'el-get-source-name el-get-sources)))
-  
-  (el-get 'sync my-packages)
+
+  (el-get-bundle solarized-emacs)
+  (el-get-bundle magit)
+  (el-get-bundle smex)
+  (el-get-bundle haskell-mode)
+  (el-get-bundle ledger-mode)
+  (el-get-bundle markdown-mode)
 #+end_src
 
 ** General
-
 *** Basic settings
 
 **** Language environment
@@ -188,7 +176,7 @@ No confirmation if a file or buffer does not exist when you use C-x C-f or C-x b
 
 Ubuntu Mono as default font.
 #+begin_src emacs-lisp
-(set-default-font "Ubuntu Mono-13")
+(set-default-font "Ubuntu Mono-11")
 #+end_src
 
 No startup messages.
@@ -220,7 +208,6 @@ Change theme to solarized dark.
 #+end_src
 
 ** Org
-
 *** Basic settings
 The four Org commands org-store-link, org-capture, org-agenda, and org-iswitchb
 should be accessible through global keys (i.e., anywhere in Emacs, not just in Org buffers).
@@ -370,7 +357,6 @@ You can customize in which column tags will be displayed through org-agenda-tags
 #+end_src
 
 ** Coding
-
 *** Basic settings
 
 **** No tabs
@@ -489,4 +475,3 @@ haskell-interactive-mode counterparts:
     (define-key haskell-mode-map (kbd "C-c M-.") nil)
     (define-key haskell-mode-map (kbd "C-c C-d") nil)))
 #+end_src
-
