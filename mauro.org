@@ -176,7 +176,7 @@ No confirmation if a file or buffer does not exist when you use C-x C-f or C-x b
 
 Ubuntu Mono as default font.
 #+begin_src emacs-lisp
-(set-default-font "Ubuntu Mono-11")
+(set-default-font "Input Mono Condensed Light-9")
 #+end_src
 
 No startup messages.
