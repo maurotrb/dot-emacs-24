@@ -280,7 +280,8 @@ An entry that has unchecked checkboxes will be blocked from switching to DONE.
 *** Habits
 Org has the ability to track the consistency of a special category of TODOs, called “habits”.
 #+begin_src emacs-lisp
-(add-to-list 'org-modules "org-habit")
+;;(add-to-list 'org-modules "org-habit")
+(add-to-list 'org-modules 'org-habit t)
 #+end_src
 
 *** Tags

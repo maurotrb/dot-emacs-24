@@ -16,10 +16,8 @@
                                             ".." org-dir))))
        (load-path (append (list org-dir org-contrib-dir)
                           (or load-path nil))))
-  ;; load up Org-mode and Org-babel
   ;; if you use org from git, remember 'make autoloads'
-  (require 'org-install)
-  (require 'ob-tangle))
+  )
 
 ;; load up all literate org-mode files in this directory
 (mapc #'org-babel-load-file (directory-files dotfiles-dir t "\\.org$"))
