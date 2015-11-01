@@ -204,6 +204,8 @@ Toggle Font Lock mode in all buffers.
 
 Change theme to solarized dark.
 #+begin_src emacs-lisp
+(setq solarized-scale-org-headlines nil)
+(setq solarized-use-variable-pitch nil)
 (if window-system
   (load-theme 'solarized-dark t))
 #+end_src
