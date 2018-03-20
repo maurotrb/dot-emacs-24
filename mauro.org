@@ -5,10 +5,9 @@
 * Configuration
 ** Packages
 #+begin_src emacs-lisp
-  (setq user-emacs-directory "~/.emacs24.d/")
-  (setq el-get-dir "~/.emacs24.d/el-get/")
+  (setq el-get-dir (concat user-emacs-directory (file-name-as-directory "el-get")))
 
-  (add-to-list 'load-path "~/.emacs24.d/el-get/el-get")
+  (add-to-list 'load-path (expand-file-name "el-get/el-get" user-emacs-directory))
 
   (unless (require 'el-get nil 'noerror)
   (with-current-buffer
@@ -17,7 +16,7 @@
     (goto-char (point-max))
     (eval-print-last-sexp)))
 
-  (add-to-list 'el-get-recipe-path "~/.emacs24.d/el-get-user/recipes")
+  (add-to-list 'el-get-recipe-path (expand-file-name "el-get-user/recipes" user-emacs-directory))
 
   (el-get-bundle solarized-emacs)
   (el-get-bundle magit)
@@ -218,6 +217,7 @@ Change theme to solarized dark.
 #+end_src
 
 ** Org
+
 *** Basic settings
 The four Org commands org-store-link, org-capture, org-agenda, and org-iswitchb
 should be accessible through global keys (i.e., anywhere in Emacs, not just in Org buffers).
@@ -422,8 +422,8 @@ org-agenda-use-time-grid, and can be configured with org-agenda-time-grid.
 #+begin_src emacs-lisp
 (setq org-agenda-time-grid
       (quote ((daily today remove-match)
-              #("― ― ― ― ― ― ― ― ―" 0 17 (org-heading t))
-              (800 1000 1200 1400 1600 1800 2000 2200))))
+              (800 1000 1200 1400 1600 1800 2000 2200)
+              "......" "-----------------")))
 (setq org-agenda-current-time-string "now ―•―•―•―•―•―•―")
 #+end_src
 

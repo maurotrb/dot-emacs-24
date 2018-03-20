@@ -1,26 +1,13 @@
-;;; init.el --- Where all the magic begins
+;;; init.el
 ;;
-;; This file loads Org-mode and then loads the rest of our Emacs initialization from Emacs lisp
-;; embedded in literate Org-mode files.
+;; This file loads Org-mode and then loads the rest of our Emacs initialization
+;; from Emacs lisp embedded in literate Org-mode files.
 
-;; Load up Org Mode and (now included) Org Babel for elisp embedded in Org Mode files
-(setq dotfiles-dir (file-name-directory (or (buffer-file-name) load-file-name)))
+(setq user-emacs-directory (file-name-as-directory "~/.emacs24.d"))
 
-(let* ((org-dir (expand-file-name
-                 "lisp" (expand-file-name
-                         "org-mode" (expand-file-name
-                                "src" dotfiles-dir))))
-       (org-contrib-dir (expand-file-name
-                         "lisp" (expand-file-name
-                                 "contrib" (expand-file-name
-                                            ".." org-dir))))
-       (load-path (append (list org-dir org-contrib-dir)
-                          (or load-path nil))))
-  ;; if you use org from git, remember 'make autoloads'
-  )
-
-;; load up all literate org-mode files in this directory
-(mapc #'org-babel-load-file (directory-files dotfiles-dir t "\\.org$"))
+(add-to-list 'load-path (expand-file-name "src/org-mode/lisp" user-emacs-directory))
+(add-to-list 'load-path (expand-file-name "src/org-mode/contrib/lisp" user-emacs-directory))
+(org-babel-load-file (expand-file-name "mauro.org" user-emacs-directory))
 
 ;;; init.el ends here
 (custom-set-variables
