@@ -315,6 +315,17 @@ Set column where habit graph starts.
 (setq org-habit-graph-column 55)
 #+end_src
 
+*** Drill: flashcard and spaced repetition
+Org-Drill is an extension for Org mode. Org-Drill uses a spaced repetition algorithm
+to conduct interactive "drill sessions", using org files as sources of facts to be memorised.
+Each topic is treated as a "flash card". The material to be remembered is presented
+to the student in random order. The student rates his or her recall of each item,
+and this information is used to schedule the item for later revision.
+#+begin_src emacs-lisp
+(add-to-list 'org-modules 'org-drill t)
+(require 'org-drill)
+#+end_src
+
 *** Tags
 An excellent way to implement labels and contexts for cross-correlating information
 is to assign tags to headlines. Org mode has extensive support for tags.
