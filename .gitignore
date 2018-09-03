@@ -1,3 +1,7 @@
 *~
 el-get
 *.el
+elpa
+history
+ido.last
+smex-items
